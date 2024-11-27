@@ -17,6 +17,9 @@ docker-compose up
 - username: admin
 - password: admin
 
+- port admin : 8686
+- port web : 8484 
+
 
 Copyright (C) 2023 *[Hadi Tech Solutions](https://haditechsolutions.ir)*
 

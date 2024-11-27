@@ -15,14 +15,14 @@ services:
     depends_on: 
       - db
     ports:
-      - 8181:80
+      - 8484:80
     volumes:
       - ./public_html:/var/www/html:Z
 
   adminer:
     image: docker.iranserver.com/library/adminer:4.6
     ports:
-      - 8282:8080
+      - 8686:8080
 volumes:
   wpsite: {}
 
