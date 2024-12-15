@@ -1,6 +1,6 @@
 services:
   db:
-    image: docker.iranserver.com/library/mariadb:10.5
+    image: ghcr.io/cwm360/mariadb:10.5
     env_file: env.ini
     volumes:
       - ./data:/docker-entrypoint-initdb.d:Z
@@ -20,7 +20,7 @@ services:
       - ./public_html:/var/www/html:Z
 
   adminer:
-    image: docker.iranserver.com/library/adminer:4.6
+    image: ghcr.io/cwm360/adminer:4.6
     ports:
       - 8686:8080
 volumes:

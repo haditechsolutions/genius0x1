@@ -1,4 +1,4 @@
-FROM docker.iranserver.com/library/wordpress:php8.3-apache
+FROM ghcr.io/cwm360/wordpress:php8.3-apache
 
 WORKDIR /var/www/html
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar

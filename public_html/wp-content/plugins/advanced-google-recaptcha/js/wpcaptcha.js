@@ -576,7 +576,8 @@ jQuery(document).ready(function ($) {
     $(this).parent().addClass("captcha-selected");
   });
 
-  $(".settings_page_wpcaptcha").on("blur change keyup", "#captcha,#captcha_site_key,#captcha_secret_key", function (e) {
+  $(".settings_page_wpcaptcha").on("change keyup", "#captcha,#captcha_site_key,#captcha_secret_key", function (e) { 
+    $("#captcha_verified").val("0");
     if ($("#captcha").val() != "disabled" && $(this).val() != $(this).data("old")) {
       $(".captcha_verify_wrapper").show();
     } else {
@@ -689,10 +690,14 @@ jQuery(document).ready(function ($) {
                 $("#captcha_secret_key").data("old", $("#captcha_secret_key").val());
                 $(".captcha_verify_wrapper").hide();
                 $("#captcha_verified").val("1");
+                var message = "Captcha has been verified successfully";
+                if($("#captcha").val() == 'recaptchav3'){
+                    var message = "Captcha has been verified successfully with a score of " + response.data;
+                }
                 wpcaptcha_swal.fire({
                   type: "success",
                   heightAuto: false,
-                  title: "Captcha has been verified successfully",
+                  title: message,
                 });
               } else {
                 wpcaptcha_swal
@@ -908,15 +913,27 @@ jQuery(document).ready(function ($) {
 
   if ($("#captcha").val() != "disabled" && $("#captcha").val() != "builtin" && $("#captcha").val() != "icons") {
     $(".captcha_keys_wrapper").show();
+    if($("#captcha").val() == 'recaptchav3'){
+        $(".captcha_score_wrapper").show();
+    } else {
+        $(".captcha_score_wrapper").hide();
+    }
   } else {
     $(".captcha_keys_wrapper").hide();
+    $(".captcha_score_wrapper").hide();
   }
 
   $("#captcha").on("change", function () {
     if ($("#captcha").val() != "disabled" && $("#captcha").val() != "builtin" && $("#captcha").val() != "icons") {
       $(".captcha_keys_wrapper").show();
+      if($("#captcha").val() == 'recaptchav3'){
+         $(".captcha_score_wrapper").show();
+      } else {
+         $(".captcha_score_wrapper").hide();
+      }
     } else {
       $(".captcha_keys_wrapper").hide();
+      $(".captcha_score_wrapper").hide();
     }
   });
 
@@ -1021,6 +1038,14 @@ jQuery(document).ready(function ($) {
       });
     }
   }
+
+  $(".save-settings").on("click", function(e){
+    if ($("#captcha").val() != "disabled" && $("#captcha_verified").val() != "1") {
+        e.preventDefault();
+        $(".save-settings").blur();
+        alert('You did not verify the selected captcha method so it will not be saved to prevent you getting locked out of your website.');
+    }    
+  });
 
   function create_fails_chart() {
     if (!wpcaptcha_vars.stats_fails || !wpcaptcha_vars.stats_fails.days.length) {

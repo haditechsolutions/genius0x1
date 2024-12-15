@@ -98,7 +98,8 @@ class WPCaptcha_Functions extends WPCaptcha
         $options = WPCaptcha_Setup::get_options();
         $ip = WPCaptcha_Utility::getUserIP();
 
-        $numFails = $wpdb->get_var(
+        // phpcs:ignore db call warning as we are using a custom table
+        $numFails = $wpdb->get_var( // phpcs:ignore
             $wpdb->prepare(
                 "SELECT COUNT(login_attempt_ID) FROM " . $wpdb->wpcatcha_login_fails . " WHERE login_attempt_date + INTERVAL %d MINUTE > %s AND login_attempt_IP = %s",
                 array($options['retries_within'], current_time('mysql'), $ip)
@@ -124,7 +125,8 @@ class WPCaptcha_Functions extends WPCaptcha
                 $user_id = $user->ID;
             }
 
-            $wpdb->insert(
+            // phpcs:ignore db call warning as we are using a custom table
+            $wpdb->insert( // phpcs:ignore
                 $wpdb->wpcatcha_login_fails,
                 array(
                     'user_id' => $user_id,
@@ -152,12 +154,13 @@ class WPCaptcha_Functions extends WPCaptcha
                 $user_id = $user->ID;
             }
 
-            $wpdb->insert(
+            // phpcs:ignore db call warning as we are using a custom table
+            $wpdb->insert( // phpcs:ignore
                 $wpdb->wpcatcha_accesslocks,
                 array(
                     'user_id' => $user_id,
                     'accesslock_date' => current_time('mysql'),
-                    'release_date' => date('Y-m-d H:i:s', strtotime(current_time('mysql')) + $options['lockout_length'] * 60),
+                    'release_date' => gmdate('Y-m-d H:i:s', strtotime(current_time('mysql')) + $options['lockout_length'] * 60),
                     'accesslock_IP' => $ip,
                     'reason' => $reason
                 )
@@ -170,14 +173,16 @@ class WPCaptcha_Functions extends WPCaptcha
         global $wpdb;
         $ip = WPCaptcha_Utility::getUserIP();
 
-        $stillLocked = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM " . $wpdb->wpcatcha_accesslocks . " WHERE release_date > %s AND accesslock_IP = %s AND unlocked = 0", array(current_time('mysql'), $ip)));
+        // phpcs:ignore db call warning as we are using a custom table
+        $stillLocked = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM " . $wpdb->wpcatcha_accesslocks . " WHERE release_date > %s AND accesslock_IP = %s AND unlocked = 0", array(current_time('mysql'), $ip))); // phpcs:ignore
 
         return $stillLocked;
     }
 
     static function is_rest_request()
     {
-        if (defined('REST_REQUEST') && REST_REQUEST || isset($_GET['rest_route']) && strpos(sanitize_text_field(wp_unslash($_GET['rest_route'])), '/', 0) === 0) {
+        // no need for nonce check here
+        if (defined('REST_REQUEST') && REST_REQUEST || isset($_GET['rest_route']) && strpos(sanitize_text_field(wp_unslash($_GET['rest_route'])), '/', 0) === 0) { // phpcs:ignore
             return true;
         }
 
@@ -189,7 +194,7 @@ class WPCaptcha_Functions extends WPCaptcha
         $rest_url    = wp_parse_url(trailingslashit(rest_url()));
         $current_url = wp_parse_url(add_query_arg(array()));
         $is_rest = false;
-        if(isset($current_url['path'])){
+        if (isset($current_url['path'])) {
             $is_rest = strpos($current_url['path'], $rest_url['path'], 0) === 0;
         }
 
@@ -253,6 +258,7 @@ class WPCaptcha_Functions extends WPCaptcha
         }
 
         if ($userdata === false) {
+            /* translators: %s is replaced with the lost password URL */
             return new WP_Error('invalid_username', sprintf(__('<strong>ERROR</strong>: Invalid username. <a href="%s" title="Password Lost and Found">Lost your password</a>?', 'advanced-google-recaptcha'), site_url('wp-login.php?action=lostpassword', 'login')));
         }
 
@@ -262,11 +268,12 @@ class WPCaptcha_Functions extends WPCaptcha
             return $userdata;
         }
 
-        if(0 !== intval($userdata->user_status)){
+        if (0 !== intval($userdata->user_status)) {
             return new WP_Error('incorrect_password', __('<strong>ERROR</strong>: Inactive account', 'advanced-google-recaptcha'));
         }
 
         if (!is_string($password) || !is_string($userdata->user_pass) || is_null($userdata->ID) || !wp_check_password($password, $userdata->user_pass, $userdata->ID)) {
+            /* translators: %s is replaced with the lost password URL */
             return new WP_Error('incorrect_password', sprintf(__('<strong>ERROR</strong>: Incorrect password. <a href="%s" title="Password Lost and Found">Lost your password</a>?', 'advanced-google-recaptcha'), site_url('wp-login.php?action=lostpassword', 'login')));
         }
 
@@ -276,15 +283,16 @@ class WPCaptcha_Functions extends WPCaptcha
 
     static function handle_captcha()
     {
+        // no need for nonce check here, added phpcs:ignore to captcha $_POST variables
         $options = WPCaptcha_Setup::get_options();
         if ($options['captcha'] == 'recaptchav2') {
-            if (!isset($_POST['g-recaptcha-response']) || empty($_POST['g-recaptcha-response'])) {
+            if (!isset($_POST['g-recaptcha-response']) || empty($_POST['g-recaptcha-response'])) { // phpcs:ignore
                 return new WP_Error('wpcaptcha_recaptchav2_not_submitted', __("<strong>ERROR</strong>: reCAPTCHA verification failed.<br /><br />Please try again.", 'advanced-google-recaptcha'));
             } else {
                 $secret = $options['captcha_secret_key'];
-                $response = wp_remote_get('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $_POST['g-recaptcha-response']);
-                if(is_wp_error($response)){
-                    return new WP_Error('wpcaptcha_recaptchav3_failed', __("<strong>ERROR</strong>: reCAPTCHA verification request failed<br /><br />" . $response->get_error_message(), 'advanced-google-recaptcha'));
+                $response = wp_remote_get('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . sanitize_text_field(wp_unslash($_POST['g-recaptcha-response']))); // phpcs:ignore
+                if (is_wp_error($response)) {
+                    return new WP_Error('wpcaptcha_recaptchav3_failed', __("<strong>ERROR</strong>: reCAPTCHA verification request failed<br /><br />", 'advanced-google-recaptcha') . $response->get_error_message());
                 }
                 $response = json_decode($response['body']);
                 if ($response->success) {
@@ -294,27 +302,27 @@ class WPCaptcha_Functions extends WPCaptcha
                 }
             }
         } else if ($options['captcha'] == 'recaptchav3') {
-            if (!isset($_POST['g-recaptcha-response']) || empty($_POST['g-recaptcha-response'])) {
+            if (!isset($_POST['g-recaptcha-response']) || empty($_POST['g-recaptcha-response'])) { // phpcs:ignore
                 return new WP_Error('wpcaptcha_recaptchav3_not_submitted', __("<strong>ERROR</strong>: reCAPTCHA verification failed.<br /><br />Please try again.", 'advanced-google-recaptcha'));
             } else {
-                
+
                 $secret = $options['captcha_secret_key'];
-                $response = wp_remote_get('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $_POST['g-recaptcha-response']);
-                if(is_wp_error($response)){
-                    return new WP_Error('wpcaptcha_recaptchav3_failed', __("<strong>ERROR</strong>: reCAPTCHA verification request failed<br /><br />" . $response->get_error_message(), 'advanced-google-recaptcha'));
+                $response = wp_remote_get('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . sanitize_text_field(wp_unslash($_POST['g-recaptcha-response']))); // phpcs:ignore
+                if (is_wp_error($response)) {
+                    return new WP_Error('wpcaptcha_recaptchav3_failed', __("<strong>ERROR</strong>: reCAPTCHA verification request failed<br /><br />", 'advanced-google-recaptcha') . $response->get_error_message());
                 }
                 $response = json_decode($response['body']);
-                
-                if ($response->success) {
+                if ($response->success && $response->score >= 0.5) {
                     return true;
                 } else {
                     return new WP_Error('wpcaptcha_recaptchav3_failed', __("<strong>ERROR</strong>: reCAPTCHA verification failed.<br /><br />Please try again.", 'advanced-google-recaptcha'));
                 }
             }
         } else if ($options['captcha'] == 'builtin') {
-            if (isset($_POST['wpcaptcha_captcha'])) {
-                foreach($_POST['wpcaptcha_captcha'] as $captcha_id => $captcha_val){
-                    if($captcha_val === $_COOKIE['wpcaptcha_captcha_' . $captcha_id]){
+            if (isset($_POST['wpcaptcha_captcha'])) { // phpcs:ignore
+                $captcha_responses = array_map('sanitize_text_field', wp_unslash($_POST['wpcaptcha_captcha'])); // phpcs:ignore
+                foreach ($captcha_responses as $captcha_id => $captcha_val) {
+                    if (isset($_COOKIE['wpcaptcha_captcha_' . $captcha_id]) && $captcha_val === $_COOKIE['wpcaptcha_captcha_' . $captcha_id]) {
                         return true;
                     } else {
                         return new WP_Error('wpcaptcha_builtin_captcha_failed', __("<strong>ERROR</strong>: captcha verification failed.<br /><br />Please try again.", 'advanced-google-recaptcha'));
@@ -351,7 +359,7 @@ class WPCaptcha_Functions extends WPCaptcha
         if (wp_doing_ajax()) {
             return $validation_error;
         }
-        
+
         $captcha_check = self::handle_captcha();
 
         if ($captcha_check !== true) {
@@ -388,7 +396,7 @@ class WPCaptcha_Functions extends WPCaptcha
         $captcha_check = self::handle_captcha();
         if ($captcha_check !== true) {
             wp_die(
-                '<p><strong>' . esc_html__('ERROR:', 'advanced-google-recaptcha') . '</strong> ' . esc_html(strip_tags($captcha_check->get_error_message())) . '</p>',
+                '<p><strong>' . esc_html__('ERROR:', 'advanced-google-recaptcha') . '</strong> ' . esc_html(wp_strip_all_tags($captcha_check->get_error_message())) . '</p>',
                 'reCAPTCHA',
                 array(
                     'response'  => 403,
@@ -408,7 +416,7 @@ class WPCaptcha_Functions extends WPCaptcha
         $captcha_check = self::handle_captcha();
         if ($captcha_check !== true) {
             wp_die(
-                '<p><strong>' . esc_html__('ERROR:', 'advanced-google-recaptcha') . '</strong> ' . esc_html(strip_tags($captcha_check->get_error_message())) . '</p>',
+                '<p><strong>' . esc_html__('ERROR:', 'advanced-google-recaptcha') . '</strong> ' . esc_html(wp_strip_all_tags($captcha_check->get_error_message())) . '</p>',
                 'reCAPTCHA',
                 array(
                     'response'  => 403,
@@ -452,44 +460,60 @@ class WPCaptcha_Functions extends WPCaptcha
         }
     }
 
-    static function captcha_fields()
+    static function captcha_fields_print()
+    {
+        //phpcs:ignore this just prints the recaptcha HTML inline and all variables are already escaped
+        echo self::captcha_fields(false); //phpcs:ignore
+    }
+
+    static function captcha_fields($output = false)
     {
         $options = WPCaptcha_Setup::get_options();
+        
+        if(false === $output){
+            $output = '';
+        } 
         if ($options['captcha'] == 'recaptchav2') {
-            echo '<div class="g-recaptcha" style="transform: scale(0.9); -webkit-transform: scale(0.9); transform-origin: 0 0; -webkit-transform-origin: 0 0;" data-sitekey="' . esc_html($options['captcha_site_key']) . '"></div>';
+            $output .=  '<div class="g-recaptcha" style="transform: scale(0.9); -webkit-transform: scale(0.9); transform-origin: 0 0; -webkit-transform-origin: 0 0;" data-sitekey="' . esc_html($options['captcha_site_key']) . '"></div>';
 
-            echo '<script>
-            jQuery("form.woocommerce-checkout").on("submit", function(){
-                setTimeout(function(){
-                    grecaptcha.reset();
-                },100);
-            });
-            </script>';
-        } else if ($options['captcha'] == 'recaptchav3') {
-            echo '<input type="hidden" name="g-recaptcha-response" class="agr-recaptcha-response" value="" />';
-            echo '<script>
-        function wpcaptcha_captcha(){
-            grecaptcha.execute("' . esc_html($options['captcha_site_key']) . '", {action: "submit"}).then(function(token) {
-                var captchas = document.querySelectorAll(".agr-recaptcha-response");
-                captchas.forEach(function(captcha) {
-                    captcha.value = token;
+            if (class_exists('woocommerce')) {
+                $output .= '<script>
+                jQuery("form.woocommerce-checkout").on("submit", function(){
+                    setTimeout(function(){
+                        grecaptcha.reset();
+                    },100);
                 });
-            });
-        }
-
-        jQuery("form.woocommerce-checkout").on("submit", function(){
-            setTimeout(function(){
-                wpcaptcha_captcha();
-            },100);
-        });
-        </script>';
+                </script>';
+            }
+        } else if ($options['captcha'] == 'recaptchav3') {
+            $output .= '<input type="hidden" name="g-recaptcha-response" class="agr-recaptcha-response" value="" />';
+            $output .= '<script>
+                function wpcaptcha_captcha(){
+                    grecaptcha.execute("' . esc_html($options['captcha_site_key']) . '", {action: "submit"}).then(function(token) {
+                        var captchas = document.querySelectorAll(".agr-recaptcha-response");
+                        captchas.forEach(function(captcha) {
+                            captcha.value = token;
+                        });
+                    });
+                }
+                </script>';
+            if (class_exists('woocommerce')) {
+                $output .= '<script>
+                    jQuery("form.woocommerce-checkout").on("submit", function(){
+                        setTimeout(function(){
+                            wpcaptcha_captcha();
+                        },100);
+                    });
+                </script>';
+            }
         } else if ($options['captcha'] == 'builtin') {
-            echo '<p><label for="wpcaptcha_captcha">Are you human? Please solve: ';
-            $captcha_id = rand(1000,9999);
-            echo '<img class="wpcaptcha-captcha-img" style="vertical-align: text-top;" src="' . esc_url(WPCAPTCHA_PLUGIN_URL) . 'libs/captcha.php?wpcaptcha-generate-image=true&color=' . esc_attr(urlencode('#FFFFFF')) . '&noise=1&id=' . intval($captcha_id) . '" alt="Captcha" />';
-            echo '<input class="input" type="text" size="3" name="wpcaptcha_captcha[' . intval($captcha_id) . ']" id="wpcaptcha_captcha" />';
-            echo '</label></p><br />';
+            $output .= '<p><label for="wpcaptcha_captcha">Are you human? Please solve: ';
+            $captcha_id = wp_rand(1000, 9999);
+            $output .= '<img class="wpcaptcha-captcha-img" style="vertical-align: text-top;" src="' . esc_url(WPCAPTCHA_PLUGIN_URL) . 'libs/captcha.php?wpcaptcha-generate-image=true&color=' . esc_attr(urlencode('#FFFFFF')) . '&noise=1&id=' . intval($captcha_id) . '" alt="Captcha" />';
+            $output .= '<input class="input" type="text" size="3" name="wpcaptcha_captcha[' . intval($captcha_id) . ']" id="wpcaptcha_captcha" />';
+            $output .= '</label></p><br />';
         }
+        return $output;
     }
 
     static function login_enqueue_scripts()
@@ -502,15 +526,27 @@ class WPCaptcha_Functions extends WPCaptcha
         }
     }
 
-    static function login_print_scripts()
+    static function login_scripts_print()
+    {
+        //phpcs:ignore this just prints the recaptcha scripts inline as they can be used in various forms where enqueing normally is not always working
+        echo self::login_scripts(false); //phpcs:ignore
+    }
+
+    static function login_scripts($output = false)
     {
         $options = WPCaptcha_Setup::get_options();
 
-        if ($options['captcha'] == 'recaptchav2') {
-            echo "<script src='https://www.google.com/recaptcha/api.js?ver=" . esc_attr(self::$version) . "' id='wpcaptcha-recaptcha-js'></script>";
-        } else if ($options['captcha'] == 'recaptchav3') {
-            echo "<script src='https://www.google.com/recaptcha/api.js?onload=wpcaptcha_captcha&render=" . esc_html($options['captcha_site_key']) . "&ver=" . esc_attr(self::$version) . "' id='wpcaptcha-recaptcha-js'></script>";
+        if(false === $output){
+            $output = '';
         }
+        // scripts might need to be printed in odd contexts so wp_enqueue_script is not always ideal
+        if ($options['captcha'] == 'recaptchav2') {
+            $output .= "<script src='https://www.google.com/recaptcha/api.js?ver=" . esc_attr(self::$version) . "' id='wpcaptcha-recaptcha-js'></script>"; // phpcs:ignore
+        } else if ($options['captcha'] == 'recaptchav3') {
+            $output .= "<script src='https://www.google.com/recaptcha/api.js?onload=wpcaptcha_captcha&render=" . esc_html($options['captcha_site_key']) . "&ver=" . esc_attr(self::$version) . "' id='wpcaptcha-recaptcha-js'></script>"; // phpcs:ignore
+        }
+
+        return $output;
     }
 
     static function accesslock_screen($block_message = false)
@@ -599,13 +635,19 @@ class WPCaptcha_Functions extends WPCaptcha
 
         echo '<form method="POST">';
 
-        if (isset($_POST['wpcaptcha_recovery_submit']) && wp_verify_nonce($_POST['wpcaptcha_recovery_nonce'], 'wpcaptcha_recovery')) {
-            if (!filter_var($_POST['wpcaptcha_recovery_email'], FILTER_VALIDATE_EMAIL)) {
+        if (isset($_POST['wpcaptcha_recovery_submit']) && isset($_POST['wpcaptcha_recovery_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wpcaptcha_recovery_nonce'])), 'wpcaptcha_recovery')) {
+            $wpcaptcha_recovery_email = false;
+
+            if (isset($_POST['wpcaptcha_recovery_email']) && is_email(sanitize_email(wp_unslash($_POST['wpcaptcha_recovery_email'])))) {
+                $wpcaptcha_recovery_email = sanitize_email(wp_unslash($_POST['wpcaptcha_recovery_email']));
+            }
+
+            if (false === $wpcaptcha_recovery_email) {
                 $display_message = '<p class="error">Invalid email address.</p>';
             } else {
-                $user = get_user_by('email', sanitize_text_field($_POST['wpcaptcha_recovery_email']));
+                $user = get_user_by('email', $wpcaptcha_recovery_email);
                 if (user_can($user, 'administrator')) {
-                    $unblock_key = md5(time() . rand(10000, 9999));
+                    $unblock_key = md5(time() . wp_rand(1000, 9999));
                     $unblock_attempts = get_transient('wpcaptcha_unlock_count_' . $user->ID);
                     if (!$unblock_attempts) {
                         $unblock_attempts = 0;
@@ -620,7 +662,7 @@ class WPCaptcha_Functions extends WPCaptcha
                         $unblock_url = add_query_arg(array('wpcaptcha_unblock' => $unblock_key), wp_login_url());
 
                         $subject  = 'WP Captcha unblock instructions for ' . site_url();
-                        $message  = '<p>The IP ' . WPCaptcha_Utility::getUserIP() . ' has been locked down and someone submitted an unblock request using your email address <strong>' . $_POST['wpcaptcha_recovery_email'] . '</strong></p>';
+                        $message  = '<p>The IP ' . WPCaptcha_Utility::getUserIP() . ' has been locked down and someone submitted an unblock request using your email address <strong>' . $wpcaptcha_recovery_email . '</strong></p>';
                         $message .= '<p>If this was you, and you have locked yourself out please click <a target="_blank" href="' . $unblock_url . '">this link</a> which is valid for 1 hour.</p>';
                         $message .= '<p>Please note that for security reasons, this will only unblock the IP of the person opening the link, not the IP of the person who submitted the unblock request. To unblock someone else please do so on the <a href="' . admin_url('options-general.php?page=wpcaptcha#wpcaptcha_activity') . '">WP Captcha Activity Page</p>';
 
@@ -637,7 +679,7 @@ class WPCaptcha_Functions extends WPCaptcha
                 if (isset($unblock_attempts) && $unblock_attempts > 3) {
                     $display_message = '<p class="error">You have already attempted to unblock yourself recently, please wait 1 hour before trying again.</p>';
                 } else {
-                    $display_message = '<p>If an administrator having the email address <strong>' . $_POST['wpcaptcha_recovery_email'] . '</strong> exists, an email has been sent with instructions to regain access.</p>';
+                    $display_message = '<p>If an administrator having the email address <strong>' . $wpcaptcha_recovery_email . '</strong> exists, an email has been sent with instructions to regain access.</p>';
                 }
             }
         }
@@ -670,7 +712,8 @@ class WPCaptcha_Functions extends WPCaptcha
     {
         global $wpdb;
         $options = WPCaptcha_Setup::get_options();
-        if (isset($_GET['wpcaptcha_unblock']) && $options['global_unblock_key'] === $_GET['wpcaptcha_unblock']) {
+        // no need for nonce check here as URL can be entered manually
+        if (isset($_GET['wpcaptcha_unblock']) && $options['global_unblock_key'] === $_GET['wpcaptcha_unblock']) { // phpcs:ignore
             $user_ip = WPCaptcha_Utility::getUserIP();
             if (!in_array($user_ip, $options['whitelist'])) {
                 $options['whitelist'][] = WPCaptcha_Utility::getUserIP();
@@ -678,12 +721,16 @@ class WPCaptcha_Functions extends WPCaptcha
             update_option(WPCAPTCHA_OPTIONS_KEY, $options);
         }
 
-        if (isset($_GET['wpcaptcha_unblock']) && strlen($_GET['wpcaptcha_unblock']) == 32) {
-            $unblock_key = sanitize_key($_GET['wpcaptcha_unblock']);
+
+
+        if (isset($_GET['wpcaptcha_unblock']) && strlen(sanitize_text_field(wp_unslash($_GET['wpcaptcha_unblock']))) == 32) { // phpcs:ignore
+            $unblock_key = sanitize_key($_GET['wpcaptcha_unblock']); // phpcs:ignore
             $unblock_transient = get_transient('wpcaptcha_unlock_' . $unblock_key);
             if ($unblock_transient == $unblock_key) {
                 $user_ip = WPCaptcha_Utility::getUserIP();
-                $wpdb->delete(
+
+                // phpcs:ignore db call warning as we are using a custom table
+                $wpdb->delete( // phpcs:ignore
                     $wpdb->wpcatcha_accesslocks,
                     array(
                         'accesslock_IP' => $user_ip
@@ -1183,7 +1230,11 @@ class WPCaptcha_Functions extends WPCaptcha
         check_admin_referer('wpcaptcha_install_template');
         $options = WPCaptcha_Setup::get_options();
 
-        $template = $_GET['template'];
+        $template = false;
+        if (isset($_GET['template'])) {
+            $template = sanitize_key(wp_unslash($_GET['template']));
+        }
+
         $templates = self::get_templates();
 
         if (array_key_exists($template, $templates)) {
@@ -1201,7 +1252,8 @@ class WPCaptcha_Functions extends WPCaptcha
         }
 
         if (!empty($_GET['redirect'])) {
-            wp_safe_redirect($_GET['redirect']);
+            $redirect_url = sanitize_url(wp_unslash($_GET['redirect']));
+            wp_safe_redirect($redirect_url);
         }
     }
 } // class
