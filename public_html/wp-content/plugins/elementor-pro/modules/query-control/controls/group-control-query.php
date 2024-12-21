@@ -31,10 +31,16 @@ class Group_Control_Query extends Group_Control_Base {
 		return $this->init_fields_by_name( $args['name'] );
 	}
 
-	protected function get_fields_array( $name ) {
+	/**
+	 * Build the group-controls array
+	 * Note: this method completely overrides any settings done in Group_Control_Posts
+	 * @param string $name
+	 *
+	 * @return array
+	 */
+	protected function init_fields_by_name( $name ) {
 		$fields = [];
 
-		$tab_keys = $this->get_tabs_keys( $name );
 		$name .= '_';
 
 		$fields['post_type'] = [
@@ -50,9 +56,9 @@ class Group_Control_Query extends Group_Control_Base {
 			'type' => Controls_Manager::TABS,
 		];
 
-		$tabs_wrapper = $tab_keys['tabs_wrapper'];
-		$include_wrapper = $tab_keys['include_wrapper'];
-		$exclude_wrapper = $tab_keys['exclude_wrapper'];
+		$tabs_wrapper = $name . 'query_args';
+		$include_wrapper = $name . 'query_include';
+		$exclude_wrapper = $name . 'query_exclude';
 
 		$fields['query_include'] = [
 			'type' => Controls_Manager::TAB,
@@ -397,19 +403,6 @@ class Group_Control_Query extends Group_Control_Base {
 			],
 		];
 
-		return $fields;
-	}
-
-	/**
-	 * Build the group-controls array
-	 * Note: this method completely overrides any settings done in Group_Control_Posts
-	 * @param string $name
-	 *
-	 * @return array
-	 */
-	protected function init_fields_by_name( $name ) {
-		$fields = $this->get_fields_array( $name );
-
 		static::init_presets();
 
 		return $fields;
@@ -555,14 +548,6 @@ class Group_Control_Query extends Group_Control_Base {
 	protected function get_default_options() {
 		return [
 			'popover' => false,
-		];
-	}
-
-	protected function get_tabs_keys( $name ) {
-		return [
-			'tabs_wrapper' => $name . '_query_args',
-			'include_wrapper' => $name . '_query_include',
-			'exclude_wrapper' => $name . '_query_exclude',
 		];
 	}
 }

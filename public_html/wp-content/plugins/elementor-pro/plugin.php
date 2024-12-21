@@ -16,7 +16,6 @@ use ElementorPro\Core\Preview\Preview;
 use ElementorPro\Core\Upgrade\Manager as UpgradeManager;
 use ElementorPro\License\API;
 use ElementorPro\License\Updater;
-use ElementorPro\Includes\ElementorCustomOptionHelper; // RTL : USE HELPER TO AVOID WRITING WHOLE NAMESPACE
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -197,234 +196,6 @@ class Plugin {
 			[],
 			$has_custom_file ? null : ELEMENTOR_PRO_VERSION
 		);
-
-
-        /*Load custom css in the frontend*/
-        if(is_rtl()) {
-            wp_enqueue_style(
-                'elementor-pro-custom-rtl',
-                $this->get_frontend_file_url('frontend-custom-rtl.css', false),
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        /*Load assets, event in ltr mode!*/
-        if (ElementorCustomOptionHelper::is_feature_enabled('rtl_icons')) {
-            wp_enqueue_style(
-                'elementor-custom-frontend-rtl-icons',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/rtlicons/rtlicons.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('anjoman_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-anjoman-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/anjoman/anjoman.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('byekan_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-byekan-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/byekan/byekan.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('estedad_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-estedad-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/estedad/estedad.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-            wp_enqueue_style(
-                'elementor-frontend-estedad-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/estedad-fn/estedad-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('iransans_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-iransans-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/iransans/iransans.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('iransansx_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-iransansx-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/iransansx/iransansx.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('iranyekan_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-iranyekan-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/iranyekan/iranyekan.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-
-            wp_enqueue_style(
-                'elementor-frontend-iranyekan-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/iranyekan-fn/iranyekan-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('kara_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-kara-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/kara/kara.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('mikhak_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-mikhak-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/mikhak/mikhak.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('nahid_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-nahid-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/nahid-fn/nahid-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('parastoo_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-parastoo-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/parastoo/parastoo.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('pelak_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-pelak-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/pelak/pelak.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('pinar_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-pinar-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/pinar/pinar.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-            wp_enqueue_style(
-                'elementor-frontend-pinar-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/pinar/pinar-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('sahel_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-sahel-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/sahel-fn/sahel-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('samim_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-samim-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/samim-fn/samim-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('shabnam_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-shabnam-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/shabnam/shabnam.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-            wp_enqueue_style(
-                'elementor-frontend-shabnam-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/shabnam-fn/shabnam-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('tanha_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-tanha-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/tanha/tanha.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-            wp_enqueue_style(
-                'elementor-frontend-tanha-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/tanha-fn/tanha-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('vazir_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-vazir-fn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/vazir-fn/vazir-fn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-            wp_enqueue_style(
-                'elementor-frontend-vazirmatn-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/vazirmatn/vazirmatn.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
-        if (ElementorCustomOptionHelper::is_feature_enabled('yekan_font')) {
-            wp_enqueue_style(
-                'elementor-frontend-yekan-font',
-                ELEMENTOR_PRO_ASSETS_URL . 'fonts/yekan/yekan.css',
-                [],
-                $has_custom_file ? null : ELEMENTOR_PRO_VERSION
-            );
-        }
-
-
 	}
 
 	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
@@ -464,7 +235,11 @@ class Plugin {
 
 		wp_set_script_translations( 'elementor-pro-frontend', 'elementor-pro', ELEMENTOR_PRO_PATH . 'languages' );
 
-		wp_enqueue_script( 'pro-elements-handlers' );
+		if ( self::elementor()->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			wp_enqueue_script( 'pro-elements-handlers' );
+		} else {
+			wp_enqueue_script( 'pro-preloaded-elements-handlers' );
+		}
 
 		$assets_url = ELEMENTOR_PRO_ASSETS_URL;
 
@@ -509,6 +284,10 @@ class Plugin {
 			'ElementorProFrontendConfig',
 			$locale_settings
 		);
+
+		if ( $this->is_assets_loader_exist() ) {
+			$this->register_assets();
+		}
 	}
 
 	public function register_frontend_scripts() {
@@ -533,6 +312,16 @@ class Plugin {
 		);
 
 		wp_register_script(
+			'pro-preloaded-elements-handlers',
+			ELEMENTOR_PRO_URL . 'assets/js/preloaded-elements-handlers' . $suffix . '.js',
+			[
+				'elementor-frontend',
+			],
+			ELEMENTOR_PRO_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'smartmenus',
 			ELEMENTOR_PRO_URL . 'assets/lib/smartmenus/jquery.smartmenus' . $suffix . '.js',
 			[
@@ -542,20 +331,16 @@ class Plugin {
 			true
 		);
 
-		$sticky_handle = $this->is_assets_loader_exist() ? 'e-sticky' : 'elementor-sticky';
-
-		wp_register_script(
-			$sticky_handle,
-			ELEMENTOR_PRO_URL . 'assets/lib/sticky/jquery.sticky' . $suffix . '.js',
-			[
-				'jquery',
-			],
-			ELEMENTOR_PRO_VERSION,
-			true
-		);
-
-		if ( $this->is_assets_loader_exist() ) {
-			$this->register_assets();
+		if ( ! $this->is_assets_loader_exist() ) {
+			wp_register_script(
+				'elementor-sticky',
+				ELEMENTOR_PRO_URL . 'assets/lib/sticky/jquery.sticky' . $suffix . '.js',
+				[
+					'jquery',
+				],
+				ELEMENTOR_PRO_VERSION,
+				true
+			);
 		}
 	}
 

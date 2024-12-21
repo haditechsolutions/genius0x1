@@ -13,7 +13,6 @@ use ElementorPro\Modules\ThemeBuilder\AdminMenuItems\Theme_Builder_Menu_Item;
 use ElementorPro\Modules\ThemeBuilder\Module as Theme_Builder_Table_View;
 use ElementorPro\Modules\ThemeBuilder\Module as ThemeBuilderModule;
 use ElementorPro\Plugin;
-use ElementorPro\License\Admin; // RTL : USER ADMIN LICESNE CHECK
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -191,8 +190,7 @@ class Module extends BaseModule {
 	 */
 	public function __construct() {
 		$this->lock = new Feature_Lock( [ 'type' => 'theme-builder' ] );
-	// RTL : CHECK LICENSE
-        if(Admin::check_rtl_license()){
+
 		Plugin::elementor()->data_manager->register_controller( Controller::class );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ], 11 /* Override core actions */ );
@@ -218,6 +216,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/finder/categories', function ( array $categories ) {
 			return $this->add_finder_item( $categories );
 		}, 11 /* After old theme builder */ );
-        }
+
 	}
 }

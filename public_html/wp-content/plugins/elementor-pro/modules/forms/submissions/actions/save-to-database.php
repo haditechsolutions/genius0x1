@@ -41,7 +41,8 @@ class Save_To_Database extends Action_Base {
 		$widget->add_control(
 			'submissions_action_message',
 			[
-				'type' => Controls_Manager::ALERT,
+				// TODO: Remove define() with the release of Elementor 3.22
+				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
 				'alert_type' => 'info',
 				'content' => sprintf(
 					/* translators: 1: Link open tag, 2: Link open tag, 3: Link close tag. */
@@ -49,22 +50,6 @@ class Save_To_Database extends Action_Base {
 					sprintf( '<a href="%s" target="_blank" rel="noreferrer">', self_admin_url( 'admin.php?page=' . Component::PAGE_ID ) ),
 					'</a>',
 				),
-			]
-		);
-
-		$widget->add_control(
-			'submissions_metadata',
-			[
-				'label' => esc_html__( 'Metadata', 'elementor-pro' ),
-				'type' => Controls_Manager::SELECT2,
-				'multiple' => true,
-				'options' => [
-					'remote_ip' => esc_html__( 'User IP', 'elementor-pro' ),
-					'user_agent' => esc_html__( 'User Agent', 'elementor-pro' ),
-				],
-				'render_type' => 'none',
-				'label_block' => true,
-				'default' => [ 'remote_ip', 'user_agent' ],
 			]
 		);
 
@@ -80,8 +65,7 @@ class Save_To_Database extends Action_Base {
 	 * @param \ElementorPro\Modules\Forms\Classes\Ajax_Handler $ajax_handler
 	 */
 	public function run( $record, $ajax_handler ) {
-		$meta_keys = array_merge( [ 'page_url', 'page_title' ], $record->get_form_settings( 'submissions_metadata' ) );
-		$meta = $record->get_form_meta( $meta_keys );
+		$meta = $record->get_form_meta( [ 'page_url', 'page_title', 'user_agent', 'remote_ip' ] );
 
 		$actions_count = ( new Collection( $record->get_form_settings( 'submit_actions' ) ) )
 			->filter(function ( $value ) {
@@ -105,8 +89,8 @@ class Save_To_Database extends Action_Base {
 			'form_name' => $form_name,
 			'campaign_id' => 0,
 			'user_id' => get_current_user_id(),
-			'user_ip' => ! empty( $meta['remote_ip'] ) ? $meta['remote_ip']['value'] : '',
-			'user_agent' => ! empty( $meta['user_agent'] ) ? $meta['user_agent']['value'] : '',
+			'user_ip' => $meta['remote_ip']['value'],
+			'user_agent' => $meta['user_agent']['value'],
 			'actions_count' => $actions_count,
 			'actions_succeeded_count' => 0,
 			'meta' => wp_json_encode( [

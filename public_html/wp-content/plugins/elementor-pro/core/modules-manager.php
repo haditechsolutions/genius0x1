@@ -1,7 +1,6 @@
 <?php
 namespace ElementorPro\Core;
 
-use ElementorPro\License\Admin; // RTL : USE ADMIN LICENSE CHECK
 use ElementorPro\Plugin;
 use ElementorPro\Base\Module_Base;
 
@@ -16,7 +15,6 @@ final class Modules_Manager {
 	private $modules = [];
 
 	public function __construct() {
-        if(Admin::check_rtl_license()){
 		$modules = [
 			'query-control',
 			'custom-attributes',
@@ -40,7 +38,6 @@ final class Modules_Manager {
 			// Modules with Widgets.
 			'theme-builder',
 			'loop-builder',
-			'off-canvas',
 			'posts',
 			'gallery',
 			'forms',
@@ -74,15 +71,8 @@ final class Modules_Manager {
 			'nested-carousel',
 			'loop-filter',
 			'tiers',
-			'link-in-bio',
-			'floating-buttons',
-			'search',
-			'aparat-video',
 		];
-        } else {
-            $modules = [];
-        }
-        if(!empty($modules)){
+
 		foreach ( $modules as $module_name ) {
 			$class_name = str_replace( '-', ' ', $module_name );
 			$class_name = str_replace( ' ', '', ucwords( $class_name ) );
@@ -101,7 +91,6 @@ final class Modules_Manager {
 
 			if ( $class_name::is_active() ) {
 				$this->modules[ $module_name ] = $class_name::instance();
-			}
 			}
 		}
 	}

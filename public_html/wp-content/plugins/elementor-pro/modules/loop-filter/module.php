@@ -54,7 +54,11 @@ class Module extends Module_Base {
 				'</a>'
 			),
 			'release_status' => Manager::RELEASE_STATUS_BETA,
-			'default' => Manager::STATE_ACTIVE,
+			'default' => Manager::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.20',
+			],
 		];
 
 		return $experiment_data;
@@ -148,7 +152,7 @@ class Module extends Module_Base {
 		$current_query_vars = $this->get_current_query_vars();
 
 		$config['loopFilter'] = [
-			'mainQueryPostType' => $current_query_vars['post_type'] ?? 'post',
+			'mainQueryPostType' => $current_query_vars['post_type'],
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 		];
 

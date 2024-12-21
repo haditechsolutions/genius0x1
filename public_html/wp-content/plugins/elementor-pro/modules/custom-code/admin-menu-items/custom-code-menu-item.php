@@ -31,8 +31,6 @@ class Custom_Code_Menu_Item implements Admin_Menu_Item {
 	}
 
 	public function is_visible() {
-	// RTL : It's always visible
-	return true;
 		return API::is_licence_has_feature( static::LICENSE_FEATURE_NAME, API::BC_VALIDATION_CALLBACK );
 	}
 }

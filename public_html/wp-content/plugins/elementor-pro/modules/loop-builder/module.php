@@ -9,8 +9,6 @@ use ElementorPro\Plugin;
 use Elementor\Core\Base\Document;
 use ElementorPro\Modules\LoopBuilder\Documents\Loop as LoopDocument;
 use ElementorPro\Core\Utils;
-use ElementorPro\Modules\LoopBuilder\Skins\Skin_Loop_Post_Taxonomy;
-use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -24,24 +22,11 @@ class Module extends Module_Base {
 	const TEMPLATE_LIBRARY_TYPE_SLUG = 'loop-item';
 	const LOOP_BASE_SKIN_ID = 'base';
 	const LOOP_POST_SKIN_ID = 'post';
-	const LOOP_POST_TAXONOMY_SKIN_ID = 'post_taxonomy';
 	const QUERY_ID = 'query';
 	const LOOP_WIDGETS = [
 		'loop-grid',
 		'loop-carousel',
 	];
-
-	const TAXONOMY_LOOP_EXPERIMENT_NAME = 'taxonomy_loop_addition';
-
-	public static $taxonomies_displayed_ids = [];
-
-	public static function add_to_taxonomies_avoid_list( $ids ) {
-		self::$taxonomies_displayed_ids = array_unique( array_merge( self::$taxonomies_displayed_ids, $ids ) );
-	}
-
-	public static function get_taxonomies_avoid_list_ids() {
-		return self::$taxonomies_displayed_ids;
-	}
 
 	public function get_name() {
 		return 'loop-builder';
@@ -60,10 +45,6 @@ class Module extends Module_Base {
 
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_items' ] );
 		add_action( 'elementor/template-library/create_new_dialog_fields', [ $this, 'add_posts_type_to_template_popup' ], 10 );
-
-		add_action( 'elementor/template-library/create_new_dialog_fields', [ $this, 'add_taxonomies_type_to_template_popup' ], 12 );
-		add_action( 'elementor-pro/modules/loop-builder/documents/loop/query_settings', [ $this, 'add_taxonomies_type_to_loop_settings_query' ], 12 );
-
 		add_filter( 'elementor/frontend/builder_content_data', [ $this, 'filter_content_data' ], 10, 2 );
 
 		add_action( 'manage_' . Source_Local::CPT . '_posts_columns', function ( $columns ) {
@@ -105,13 +86,7 @@ class Module extends Module_Base {
 		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
 			$config['admin_url'] = admin_url();
 			return $config;
-		} );
-
-		foreach ( static::LOOP_WIDGETS as $widget_type ) {
-			add_action( 'elementor/widget/' . $widget_type . '/skins_init', function ( Widget_Base $widget ) {
-				$widget->add_skin( new Skin_Loop_Post_Taxonomy( $widget ) );
-			}, 12 );
-		}
+		});
 	}
 
 	public function filter_template_to_canvas_view() {
@@ -197,7 +172,7 @@ class Module extends Module_Base {
 		$form->add_control( '_elementor_source', [
 			'type' => Controls_Manager::SELECT,
 			'label' => esc_html__( 'Choose source type', 'elementor-pro' ),
-			'options' => $this->get_post_type_options(),
+			'options' => [ self::LOOP_POST_SKIN_ID => esc_html__( 'Posts', 'elementor-pro' ) ],
 			'section' => 'main',
 			'required' => true,
 			'conditions' => [
@@ -266,34 +241,5 @@ class Module extends Module_Base {
 		}
 
 		return $columns;
-	}
-
-	private function get_post_type_options() {
-		$options = [ self::LOOP_POST_SKIN_ID => esc_html__( 'Posts', 'elementor-pro' ) ];
-
-		return $options;
-	}
-
-	public function add_taxonomies_type_to_template_popup( $form ) {
-		$this->add_taxonomies_to_options( $form, '_elementor_source' );
-	}
-
-	public function add_taxonomies_type_to_loop_settings_query( $form ) {
-		$this->add_taxonomies_to_options( $form, 'source' );
-	}
-
-	protected function add_taxonomies_to_options( $form, $control_name ) {
-		$controls = $form->get_controls( $control_name );
-
-		if ( ! $controls || ! isset( $controls['options'] ) ) {
-			return;
-		}
-
-		$options = $controls['options'];
-		$options[ self::LOOP_POST_TAXONOMY_SKIN_ID ] = esc_html__( 'Post Taxonomy', 'elementor-pro' );
-
-		$form->update_control($control_name, [
-			'options' => $options,
-		] );
 	}
 }

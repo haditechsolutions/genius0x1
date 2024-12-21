@@ -188,6 +188,7 @@ class Media_Carousel extends Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor-pro' ),
 				'show_external' => 'true',
 				'condition' => [
 					'type' => 'image',

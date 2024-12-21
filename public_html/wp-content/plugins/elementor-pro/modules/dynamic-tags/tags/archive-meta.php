@@ -57,9 +57,6 @@ class Archive_Meta extends Tag {
 			'key',
 			[
 				'label' => esc_html__( 'Meta Key', 'elementor-pro' ),
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 	}

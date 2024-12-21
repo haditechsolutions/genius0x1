@@ -255,10 +255,5 @@ class Icons_Manager {
 		$this->actions();
 		$this->add_icon_type( 'custom', new Icons\Custom_Icons() );
 		$this->add_icon_type( 'font-awesome-pro', new Icons\Font_Awesome_Pro() );
-	// RTL : APPEND CUSTOM ICONS
-        if(\ElementorPro\Includes\ElementorCustomOptionHelper::is_feature_enabled('rtl_icons')){
-            $this->add_icon_type('rtlicons', new Icons\RTL_Icons());
-        }
-
 	}
 }

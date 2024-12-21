@@ -69,16 +69,7 @@ class App extends BaseApp {
 			true
 		);
 
-        if(is_rtl()){
-            wp_enqueue_style(
-                'elementor-custom-rtl',
-                $this->get_css_assets_url('custom', null, '', true),
-                [],
-                ELEMENTOR_PRO_VERSION
-            );
-        }
-	// RTL : FIX APP TRANSLATIONS
-		wp_set_script_translations( 'elementor-pro-app', 'elementor-pro', ELEMENTOR_PRO_PATH . 'languages');
+		wp_set_script_translations( 'elementor-pro-app', 'elementor-pro' );
 	}
 
 	private function enqueue_config() {

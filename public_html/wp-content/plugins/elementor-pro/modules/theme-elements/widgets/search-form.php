@@ -9,7 +9,6 @@ use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Utils;
 use ElementorPro\Plugin;
-use ElementorPro\Modules\Search\Module as Search_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -33,10 +32,6 @@ class Search_Form extends Base {
 		return [ 'search', 'form' ];
 	}
 
-	public function show_in_panel(): bool {
-		return ! Plugin::elementor()->experiments->is_feature_active( Search_Module::FEATURE_ID );
-	}
-
 	public function get_style_depends() {
 		if ( Icons_Manager::is_migration_allowed() ) {
 			return [ 'elementor-icons-fa-solid' ];
@@ -51,17 +46,6 @@ class Search_Form extends Base {
 				'label' => esc_html__( 'Search Form', 'elementor-pro' ),
 			]
 		);
-
-		if ( Plugin::elementor()->experiments->is_feature_active( Search_Module::FEATURE_ID ) ) {
-			$this->add_deprecation_message(
-				'3.23.0',
-				esc_html__(
-					'You are currently editing a Search Form Widget in its old version. Any new Search widget dragged into the canvas will be the new Search widget, with the improved search capabilities.',
-					'elementor-pro'
-				),
-				'search'
-			);
-		}
 
 		$this->add_control(
 			'skin',
@@ -753,7 +737,7 @@ class Search_Form extends Base {
 			'form',
 			[
 				'class' => 'elementor-search-form',
-				'action' => esc_url( home_url() ),
+				'action' => home_url(),
 				'method' => 'get',
 			]
 		);
@@ -883,7 +867,8 @@ class Search_Form extends Base {
 			'form',
 			{
 				'class': 'elementor-search-form',
-				'action': '<?php echo esc_url( home_url() ); ?>',
+				'action': '<?php // PHPCS - the method home_url is safe.
+					echo home_url(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>',
 				'method': 'get',
 			}
 		);

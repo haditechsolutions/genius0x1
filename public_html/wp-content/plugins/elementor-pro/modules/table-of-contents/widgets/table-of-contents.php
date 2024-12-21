@@ -38,10 +38,6 @@ class Table_Of_Contents extends Base_Widget {
 		return [ 'toc' ];
 	}
 
-	protected function is_dynamic_content(): bool {
-		return false;
-	}
-
 	/**
 	 * Get Frontend Settings
 	 *

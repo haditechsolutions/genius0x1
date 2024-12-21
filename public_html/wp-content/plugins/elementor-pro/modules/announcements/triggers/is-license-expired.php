@@ -22,10 +22,6 @@ class IsLicenseExpired extends Trigger_Base {
 	 * @return bool
 	 */
 	public function is_active(): bool {
-		// RTL
-		return false;
-		
-		
 		if ( ! API::is_license_expired() ) {
 			return false;
 		}

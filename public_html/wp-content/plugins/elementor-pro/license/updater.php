@@ -19,14 +19,14 @@ class Updater {
 		$this->plugin_version = ELEMENTOR_PRO_VERSION;
 		$this->plugin_name = ELEMENTOR_PRO_PLUGIN_BASE;
 		$this->plugin_slug = basename( ELEMENTOR_PRO__FILE__, '.php' );
-        // TODO : CHECK THE UPDATER OF ELEMENTOR PRO
-		//$this->response_transient_key = md5( sanitize_key( $this->plugin_name ) . 'response_transient' );
+		$this->response_transient_key = md5( sanitize_key( $this->plugin_name ) . 'response_transient' );
 
-		//$this->setup_hooks();
-		//$this->maybe_delete_transients();
+		$this->setup_hooks();
+		$this->maybe_delete_transients();
 	}
 
-	private function setup_hooks() {
+		private function setup_hooks() {
+		return;
 		if ( ! $this->is_elementor_pro_rollback() ) {
 			add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ], 50 );
 		}
@@ -127,6 +127,10 @@ class Updater {
 
 		if ( ! is_object( $_transient_data ) ) {
 			$_transient_data = new \stdClass();
+		}
+
+		if ( 'plugins.php' === $pagenow && is_multisite() ) {
+			return $_transient_data;
 		}
 
 		return $this->check_transient_data( $_transient_data );

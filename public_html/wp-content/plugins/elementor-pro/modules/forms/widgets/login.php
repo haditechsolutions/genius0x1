@@ -32,20 +32,6 @@ class Login extends Base_Widget {
 		return [ 'login', 'user', 'form' ];
 	}
 
-	/**
-	 * Get style dependencies.
-	 *
-	 * Retrieve the list of style dependencies the widget requires.
-	 *
-	 * @since 3.24.0
-	 * @access public
-	 *
-	 * @return array Widget style dependencies.
-	 */
-	public function get_style_depends(): array {
-		return [ 'widget-login', 'widget-form' ];
-	}
-
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_fields_content',
@@ -175,6 +161,7 @@ class Login extends Base_Widget {
 				'type' => Controls_Manager::URL,
 				'show_label' => false,
 				'options' => false,
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor-pro' ),
 				'description' => esc_html__( 'Note: Because of security reasons, you can ONLY use your current domain here.', 'elementor-pro' ),
 				'dynamic' => [
 					'active' => true,
@@ -202,6 +189,7 @@ class Login extends Base_Widget {
 				'type' => Controls_Manager::URL,
 				'show_label' => false,
 				'options' => false,
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor-pro' ),
 				'description' => esc_html__( 'Note: Because of security reasons, you can ONLY use your current domain here.', 'elementor-pro' ),
 				'dynamic' => [
 					'active' => true,

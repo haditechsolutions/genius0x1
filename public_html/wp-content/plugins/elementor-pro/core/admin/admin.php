@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin extends App {
+	const USAGE_PARAM_INSTALL_TIME = 'install_time_pro';
 
 	/**
 	 * Get module name.
@@ -49,16 +50,6 @@ class Admin extends App {
 		);
 
 		wp_enqueue_style( 'elementor-pro-admin' );
-        /*RTL : Load custom rtl in the admin panel*/
-        if($direction_suffix === '-rtl'){
-            wp_register_style(
-                'elementor-custom-rtl',
-                ELEMENTOR_PRO_ASSETS_URL . 'css/custom-rtl.css',
-                [],
-                ELEMENTOR_PRO_VERSION
-            );
-            wp_enqueue_style( 'elementor-custom-rtl' );
-        }
 	}
 
 	public function enqueue_scripts() {
@@ -174,8 +165,7 @@ class Admin extends App {
 		$rollback_html .= '</select>';
 
 		// Rollback
-		// RTL : DISABLED ROLLBACK FOR ELEMENTOR PRO
-		/*$tools->add_fields( 'versions', 'rollback', [
+		$tools->add_fields( 'versions', 'rollback', [
 			'rollback_pro_separator' => [
 				'field_args' => [
 					'type' => 'raw_html',
@@ -194,7 +184,7 @@ class Admin extends App {
 					'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor-pro' ) . '</span>',
 				],
 			],
-		] );*/
+		] );
 	}
 
 	public function post_elementor_pro_rollback() {
@@ -256,11 +246,27 @@ class Admin extends App {
 		return $plugin_meta;
 	}
 
+	public function change_tracker_params( $params ) {
+		unset( $params['is_first_time'] );
+
+		if ( ! isset( $params['events'] ) ) {
+			$params['events'] = [];
+		}
+
+		$params['events'] = array_merge( $params['events'], [
+			self::USAGE_PARAM_INSTALL_TIME => gmdate( 'Y-m-d H:i:s', Plugin::instance()->license_admin->get_installed_time() ),
+		] );
+
+		return $params;
+	}
+
 	public function add_finder_items( array $categories ) {
+		$settings_url = Settings::get_url();
+
 		$categories['settings']['items']['integrations'] = [
 			'title' => esc_html__( 'Integrations', 'elementor-pro' ),
 			'icon' => 'integration',
-			'url' => Settings::get_settings_tab_url( 'integrations' ),
+			'url' => $settings_url . '#tab-integrations',
 			'keywords' => [ 'integrations', 'settings', 'typekit', 'facebook', 'recaptcha', 'mailchimp', 'drip', 'activecampaign', 'getresponse', 'convertkit', 'elementor' ],
 		];
 
@@ -284,14 +290,10 @@ class Admin extends App {
 
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_items' ] );
 
-		//add_action( 'admin_post_elementor_pro_rollback', [ $this, 'post_elementor_pro_rollback' ] );
+		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'change_tracker_params' ], 200 );
+		add_action( 'admin_post_elementor_pro_rollback', [ $this, 'post_elementor_pro_rollback' ] );
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PRO_PLUGIN_BASE, function( $plugin_data ) {
 			Plugin::elementor()->admin->version_update_warning( ELEMENTOR_PRO_VERSION, $plugin_data['new_version'] );
 		} );
-
-        // RTL : Remove appliactions menu
-        add_action( 'admin_menu', function(){
-            remove_submenu_page( 'elementor', 'elementor-apps' );
-        }, 999 );
 	}
 }

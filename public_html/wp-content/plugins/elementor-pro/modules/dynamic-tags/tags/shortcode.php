@@ -38,10 +38,7 @@ class Shortcode extends Tag {
 			[
 				'label' => esc_html__( 'Shortcode', 'elementor-pro' ),
 				'type'  => Controls_Manager::TEXTAREA,
-				'ai' => [
-					'active' => false,
-				],
-			],
+			]
 		);
 	}
 

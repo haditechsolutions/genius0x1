@@ -3,7 +3,6 @@ namespace ElementorPro\Modules\Woocommerce;
 
 use Elementor\Widget_Base;
 use ElementorPro\Modules\Woocommerce\Skins\Skin_Loop_Product;
-use ElementorPro\Modules\Woocommerce\Skins\Skin_Loop_Product_Taxonomy;
 use ElementorPro\Core\Utils as ProUtils;
 use ElementorPro\Plugin;
 use ElementorPro\Base\Module_Base;
@@ -40,7 +39,6 @@ class Module extends Module_Base {
 	const SITE_SETTINGS_NOTICES_LICENSE_FEATURE_NAME = 'settings-woocommerce-notices';
 	const DYNAMIC_TAGS_LICENSE_FEATURE_NAME = 'dynamic-tags-wc';
 	const LOOP_PRODUCT_SKIN_ID = 'product';
-	const LOOP_PRODUCT_TAXONOMY_SKIN_ID = 'product_taxonomy';
 	const WC_PERSISTENT_SITE_SETTINGS = [
 		'woocommerce_cart_page_id',
 		'woocommerce_checkout_page_id',
@@ -249,7 +247,9 @@ class Module extends Module_Base {
 				<span class="elementor-button-text"><?php echo $sub_total; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				<span class="elementor-button-icon">
 					<span class="elementor-button-icon-qty" data-counter="<?php echo esc_attr( $product_count ); ?>"><?php echo $product_count; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-					<?php self::render_menu_icon( $settings, $icon ); ?>
+					<?php
+					self::render_menu_icon( $settings, $icon );
+					?>
 					<span class="elementor-screen-only"><?php esc_html_e( 'Cart', 'elementor-pro' ); ?></span>
 				</span>
 			</a>
@@ -840,14 +840,6 @@ class Module extends Module_Base {
 		$this->add_products_to_options( $form, 'source' );
 	}
 
-	public function add_products_taxonomy_type_to_template_popup( $form ) {
-		$this->add_taxonomies_to_options( $form, '_elementor_source' );
-	}
-
-	public function add_products_taxonomy_type_to_loop_settings_query( $form ) {
-		$this->add_taxonomies_to_options( $form, 'source' );
-	}
-
 	public function e_cart_count_fragments( $fragments ) {
 		$product_count = WC()->cart->get_cart_contents_count();
 
@@ -874,21 +866,6 @@ class Module extends Module_Base {
 
 		$options = $controls['options'];
 		$options[ self::LOOP_PRODUCT_SKIN_ID ] = esc_html__( 'Products', 'elementor-pro' );
-
-		$form->update_control( $control_name, [
-			'options' => $options,
-		] );
-	}
-
-	protected function add_taxonomies_to_options( $form, $control_name ) {
-		$controls = $form->get_controls( $control_name );
-
-		if ( ! $controls || ! isset( $controls['options'] ) ) {
-			return;
-		}
-
-		$options = $controls['options'];
-		$options[ self::LOOP_PRODUCT_TAXONOMY_SKIN_ID ] = esc_html__( 'Product Taxonomy', 'elementor-pro' );
 
 		$form->update_control($control_name, [
 			'options' => $options,
@@ -1385,9 +1362,6 @@ class Module extends Module_Base {
 		add_action( 'elementor/template-library/create_new_dialog_fields', [ $this, 'add_products_type_to_template_popup' ], 11 );
 		add_action( 'elementor-pro/modules/loop-builder/documents/loop/query_settings', [ $this, 'add_products_type_to_loop_settings_query' ], 11 );
 
-		add_action( 'elementor/template-library/create_new_dialog_fields', [ $this, 'add_products_taxonomy_type_to_template_popup' ], 13 );
-		add_action( 'elementor-pro/modules/loop-builder/documents/loop/query_settings', [ $this, 'add_products_taxonomy_type_to_loop_settings_query' ], 13 );
-
 		$this->use_mini_cart_template = 'yes' === get_option( 'elementor_' . self::OPTION_NAME_USE_MINI_CART, 'no' );
 
 		if ( is_admin() ) {
@@ -1488,9 +1462,6 @@ class Module extends Module_Base {
 			add_action( 'elementor/widget/' . $widget_type . '/skins_init', function( Widget_Base $widget ) {
 				$widget->add_skin( new Skin_Loop_Product( $widget ) );
 			} );
-			add_action( 'elementor/widget/' . $widget_type . '/skins_init', function ( Widget_Base $widget ) {
-				$widget->add_skin( new Skin_Loop_Product_Taxonomy( $widget ) );
-			}, 13 );
 		}
 
 		// WooCommerce Notice Site Settings

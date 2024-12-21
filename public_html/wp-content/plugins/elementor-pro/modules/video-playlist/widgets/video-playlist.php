@@ -31,10 +31,6 @@ class Video_Playlist extends Base_Widget {
 		return 'eicon-video-playlist';
 	}
 
-	protected function is_dynamic_content(): bool {
-		return false;
-	}
-
 	protected function register_controls() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
@@ -2129,7 +2125,7 @@ class Video_Playlist extends Base_Widget {
 					break;
 				}
 
-				playlistItemObject.htmlAttributesVideo = createPlaylistItemVideoAttributes( index, id, playlistItem, elementor.helpers.sanitizeUrl( playlistItemObject.videoUrl ) );
+				playlistItemObject.htmlAttributesVideo = createPlaylistItemVideoAttributes( index, id, playlistItem, playlistItemObject.videoUrl );
 
 				playlistItemsArray.push(playlistItemObject);
 			} );

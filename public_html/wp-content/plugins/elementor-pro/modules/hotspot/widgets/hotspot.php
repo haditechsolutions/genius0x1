@@ -37,10 +37,6 @@ class Hotspot extends Widget_Image {
 		return [ 'image', 'tooltip', 'CTA', 'dot' ];
 	}
 
-	protected function is_dynamic_content(): bool {
-		return false;
-	}
-
 	protected function register_controls() {
 		parent::register_controls();
 
@@ -96,6 +92,7 @@ class Hotspot extends Widget_Image {
 				'dynamic' => [
 					'active' => true,
 				],
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor-pro' ),
 			]
 		);
 
@@ -109,9 +106,6 @@ class Hotspot extends Widget_Image {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = is_rtl() ? 'left' : 'right';
-
 		$repeater->add_control(
 			'hotspot_icon_position',
 			[
@@ -119,12 +113,12 @@ class Hotspot extends Widget_Image {
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'start' => [
-						'title' => esc_html__( 'Start', 'elementor-pro' ),
-						'icon' => "eicon-h-align-{$start}",
+						'title' => esc_html__( 'Icon Start', 'elementor-pro' ),
+						'icon' => 'eicon-h-align-left',
 					],
 					'end' => [
-						'title' => esc_html__( 'End', 'elementor-pro' ),
-						'icon' => "eicon-h-align-{$end}",
+						'title' => esc_html__( 'Icon End', 'elementor-pro' ),
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'selectors_dictionary' => [
@@ -927,7 +921,7 @@ class Hotspot extends Widget_Image {
 		$this->add_responsive_control(
 			'style_tooltip_width',
 			[
-				'label' => esc_html__( 'Min Width', 'elementor-pro' ),
+				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -943,29 +937,6 @@ class Hotspot extends Widget_Image {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tooltip-min-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'style_tooltip_max_width',
-			[
-				'label' => esc_html__( 'Max Width', 'elementor-pro' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
-				'range' => [
-					'px' => [
-						'max' => 2000,
-					],
-					'em' => [
-						'max' => 200,
-					],
-					'rem' => [
-						'max' => 200,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--tooltip-max-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -1022,10 +993,6 @@ class Hotspot extends Widget_Image {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-
-		if ( empty( $settings['image']['url'] ) ) {
-			return;
-		}
 
 		$is_tooltip_direction_animation = 'e-hotspot--slide-direction' === $settings['tooltip_animation'] || 'e-hotspot--fade-direction' === $settings['tooltip_animation'];
 		$show_tooltip = 'none' === $settings['tooltip_trigger'];
@@ -1170,9 +1137,6 @@ class Hotspot extends Widget_Image {
 
 		const imageUrl = elementor.imagesManager.getImageUrl( image );
 
-		if ( ! imageUrl ) {
-			return;
-		}
 		#>
 		<img src="{{ imageUrl }}" title="" alt="">
 		<#

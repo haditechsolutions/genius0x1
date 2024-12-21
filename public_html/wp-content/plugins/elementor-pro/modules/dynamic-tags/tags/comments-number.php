@@ -36,9 +36,6 @@ class Comments_Number extends Tag {
 			[
 				'label' => esc_html__( 'No Comments Format', 'elementor-pro' ),
 				'default' => esc_html__( 'No Responses', 'elementor-pro' ),
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 
@@ -47,9 +44,6 @@ class Comments_Number extends Tag {
 			[
 				'label' => esc_html__( 'One Comment Format', 'elementor-pro' ),
 				'default' => esc_html__( 'One Response', 'elementor-pro' ),
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 
@@ -58,9 +52,6 @@ class Comments_Number extends Tag {
 			[
 				'label' => esc_html__( 'Many Comment Format', 'elementor-pro' ),
 				'default' => esc_html__( '{number} Responses', 'elementor-pro' ),
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 

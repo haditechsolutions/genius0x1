@@ -315,8 +315,6 @@ class Module extends Module_Base {
 			];
 
 			wp_add_inline_script( 'custom-code-metabox', sprintf( 'elementorProAdmin.customCode.post = %s;', wp_json_encode( $post ) ) );
-            // RTL : SET TRANSLATION FOR CUSTOM CODE SECTION
-	    wp_set_script_translations( 'custom-code-metabox', 'elementor-pro', ELEMENTOR_PRO_PATH . 'languages');
 		}, 10, 2 );
 	}
 

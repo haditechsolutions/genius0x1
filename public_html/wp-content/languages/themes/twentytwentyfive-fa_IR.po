@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Twenty-Five package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-11-19 13:58:18+0000\n"
+"PO-Revision-Date: 2024-12-18 06:55:33+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,6 +23,12 @@ msgstr "دو هزار و بیست و پنج بر سادگی و سازگاری ت
 #, gp-priority: high
 msgid "Twenty Twenty-Five"
 msgstr "دو هزار و بیست و پنج"
+
+#: patterns/text-faqs.php:35 patterns/text-faqs.php:51
+#: patterns/text-faqs.php:71 patterns/text-faqs.php:87
+msgctxt "Answer in the FAQs pattern."
+msgid "This exquisite compilation showcases a diverse array of photographs that capture the essence of different eras and cultures, reflecting the unique styles and perspectives of each artist."
+msgstr "این مجموعهٔ نفیس شامل طیف گسترده‌ای از عکس‌هایی است که جوهرهٔ دوره‌ها و فرهنگ‌های مختلف را به تصویر می‌کشند و سبک‌ها و دیدگاه‌های منحصربه‌فرد هر هنرمند را بازتاب می‌دهند."
 
 #: theme.json
 msgctxt "Custom template name"
@@ -455,6 +461,11 @@ msgstr "کتاب داستان‌ها درباره چیست؟"
 msgctxt "Heading of the FAQs pattern."
 msgid "Frequently Asked Questions"
 msgstr "پرسش‌های متداول"
+
+#: patterns/text-faqs.php
+msgctxt "Pattern description"
+msgid "A FAQs section with a FAQ heading and list of questions and answers."
+msgstr "بخش پرسش‌های متداول به همراه عنوان پرسش‌های متداول و فهرستی از پرسش‌ها و پاسخ‌ها."
 
 #: patterns/text-faqs.php
 msgctxt "Pattern title"
@@ -1330,6 +1341,11 @@ msgctxt "Button text"
 msgid "Apple Podcasts"
 msgstr "پادکست‌های اپل"
 
+#: patterns/hero-podcast.php:49
+msgctxt "Button text"
+msgid "YouTube"
+msgstr "یوتیوب"
+
 #: patterns/hero-podcast.php:43
 msgid "Subscribe on your favorite platform"
 msgstr "در پلتفرم مورد علاقه‌تان مشترک شوید."
@@ -1682,9 +1698,17 @@ msgstr "پابرگ وسط‌چین"
 msgid "An introduction to African dialects"
 msgstr "مقدمه‌ای بر گویش‌های آفریقایی"
 
+#: patterns/event-schedule.php:163
+msgid "Black and white photo of an African woman."
+msgstr "عکس سیاه و سفید از یک زن آفریقایی."
+
 #: patterns/event-schedule.php:142
 msgid "Ancient buildings and symbols"
 msgstr "ساختمان‌ها و نمادهای باستانی"
+
+#: patterns/event-schedule.php:132 patterns/media-instagram-grid.php:52
+msgid "The Acropolis of Athens."
+msgstr "آکروپولیس آتن."
 
 #: patterns/event-schedule.php:89
 msgid "Things you didn’t know about the deep ocean"
@@ -2388,6 +2412,10 @@ msgstr "نام ساختار نوشته"
 #: functions.php:114
 msgid "A collection of post format patterns."
 msgstr "مجموعه‌ای از الگوهای ساختار نوشته."
+
+#: functions.php:113
+msgid "Post formats"
+msgstr "ساختار نوشته"
 
 #: functions.php:106
 msgid "A collection of full page layouts."

@@ -33,10 +33,6 @@ class Countdown extends Base_Widget {
 		return [ 'countdown', 'number', 'timer', 'time', 'date', 'evergreen' ];
 	}
 
-	protected function is_dynamic_content(): bool {
-		return false;
-	}
-
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_countdown',
@@ -63,10 +59,7 @@ class Countdown extends Base_Widget {
 			[
 				'label' => esc_html__( 'Due Date', 'elementor-pro' ),
 				'type' => Controls_Manager::DATE_TIME,
-				// RTL : SET JALALI DATE AS DEFAULT VALUE
-				'default' => (is_rtl() && \ElementorPro\Includes\ElementorCustomOptionHelper::is_feature_enabled('jalali_date'))
-                    ? \elemJDate::date('Y-m-d H:i', strtotime( '+1 month' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ), false, true)
-                    : gmdate( 'Y-m-d H:i', strtotime( '+1 month' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ),
+				'default' => gmdate( 'Y-m-d H:i', strtotime( '+1 month' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ),
 				/* translators: %s: Time zone. */
 				'description' => sprintf( esc_html__( 'Date set according to your timezone: %s.', 'elementor-pro' ), Utils::get_timezone_string() ),
 				'condition' => [
@@ -727,19 +720,6 @@ class Countdown extends Base_Widget {
 		$instance = $this->get_settings_for_display();
 		$due_date = $instance['due_date'];
 		$string = $this->get_strftime( $instance );
-	// RTL : CONVERT JALALI
-        if(
-                is_rtl()
-            && ! Plugin::elementor()->editor->is_edit_mode()
-            && \ElementorPro\Includes\ElementorCustomOptionHelper::is_feature_enabled('jalali_date')
-			&& !empty($due_date)
-        ){
-            $due_date_date_time = explode(' ', $due_date);
-            $due_date_array = explode('-', $due_date_date_time[0]);
-            $due_date_greg_array = \elemJDate::toGregorian($due_date_array[0], $due_date_array[1], $due_date_array[2]);
-            $due_date_greg = implode('-', $due_date_greg_array) . ' '. $due_date_date_time[1];
-            $due_date = $due_date_greg;
-        }
 
 		if ( 'evergreen' === $instance['countdown_type'] ) {
 			$this->add_render_attribute( 'div', 'data-evergreen-interval', $this->get_evergreen_interval( $instance ) );

@@ -34,20 +34,10 @@ class Akismet {
 		);
 
 		$form->add_control(
-			'akismet_enabled',
-			[
-				'label' => esc_html__( 'Akismet Spam Protection', 'elementor-pro' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_off' => esc_html__( 'Off', 'elementor-pro' ),
-				'label_on' => esc_html__( 'On', 'elementor-pro' ),
-				'default' => 'yes',
-			]
-		);
-
-		$form->add_control(
 			'akismet_info',
 			[
-				'type' => Controls_Manager::ALERT,
+				// TODO: Remove define() with the release of Elementor 3.22
+				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
 				'alert_type' => 'info',
 				'content' => sprintf(
 					/* translators: 1: Link opening tag, 2: Link closing tag. */
@@ -55,9 +45,6 @@ class Akismet {
 					'<a href="http://go.elementor.com/widget-form-akismet/" target="_blank">',
 					'</a>'
 				),
-				'condition' => [
-					'akismet_enabled' => 'yes',
-				],
 			]
 		);
 
@@ -72,9 +59,6 @@ class Akismet {
 				],
 				'label_block' => true,
 				'render_type' => 'none',
-				'condition' => [
-					'akismet_enabled' => 'yes',
-				],
 			]
 		);
 
@@ -89,9 +73,6 @@ class Akismet {
 				],
 				'label_block' => true,
 				'render_type' => 'none',
-				'condition' => [
-					'akismet_enabled' => 'yes',
-				],
 			]
 		);
 
@@ -106,9 +87,6 @@ class Akismet {
 				],
 				'label_block' => true,
 				'render_type' => 'none',
-				'condition' => [
-					'akismet_enabled' => 'yes',
-				],
 			]
 		);
 
@@ -123,9 +101,6 @@ class Akismet {
 				],
 				'label_block' => true,
 				'render_type' => 'none',
-				'condition' => [
-					'akismet_enabled' => 'yes',
-				],
 			]
 		);
 
@@ -160,10 +135,6 @@ class Akismet {
 
 	private function is_spammed( Form_Record $record ) : bool {
 		$settings = $record->get( 'form_settings' );
-
-		if ( empty( $settings['akismet_enabled'] ) ) {
-			return false;
-		}
 
 		$params = [];
 

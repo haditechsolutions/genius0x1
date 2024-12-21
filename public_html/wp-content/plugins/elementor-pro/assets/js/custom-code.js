@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.23.0 - 29-07-2024 */
+/*! elementor-pro - v3.20.0 - 26-03-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -126,7 +126,6 @@ class ConditionsProvider extends _baseContext.default {
     super(props);
     this.state = {
       ...this.state,
-      conditionsFetched: false,
       conditions: {},
       updateConditionItemState: this.updateConditionItemState.bind(this),
       removeConditionItemInState: this.removeConditionItemInState.bind(this),
@@ -141,17 +140,7 @@ class ConditionsProvider extends _baseContext.default {
    * the subIds.
    */
   componentDidMount() {
-    this.executeAction(ConditionsProvider.actions.FETCH_CONFIG, () => _conditionsConfig.default.create()).then(conditionsConfig => this.conditionsConfig = conditionsConfig).then(this.normalizeConditionsState.bind(this)).then(() => {
-      this.setSubIdTitles.bind(this);
-      this.setState({
-        conditionsFetched: true
-      });
-    });
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevState.conditionsFetched && this.state.conditionsFetched) {
-      this.setSubIdTitles();
-    }
+    this.executeAction(ConditionsProvider.actions.FETCH_CONFIG, () => _conditionsConfig.default.create()).then(conditionsConfig => this.conditionsConfig = conditionsConfig).then(this.normalizeConditionsState.bind(this)).then(this.setSubIdTitles.bind(this));
   }
 
   /**
@@ -227,7 +216,7 @@ class ConditionsProvider extends _baseContext.default {
           subIdAutocomplete: this.conditionsConfig.getSubIdAutocomplete(condition.sub),
           supIdOptions: condition.subId ? [{
             value: condition.subId,
-            label: ''
+            label: condition.subId
           }] : []
         });
         return {
@@ -2621,7 +2610,7 @@ class CustomCode extends elementorModules.Module {
     });
   }
   addOpenAIButton() {
-    const $buttonOpenAI = jQuery(`<button class="e-ai-button"><i class="eicon-ai"></i> ${__('Code with AI', 'elementor-pro')}</button>`);
+    const $buttonOpenAI = jQuery(`<button class="e-ai-button"><i class="eicon-ai"></i> ${__('Write me code', 'elementor-pro')}</button>`);
     $buttonOpenAI.on('click', event => {
       event.preventDefault();
       const isRTL = elementorCommon.config.isRTL;

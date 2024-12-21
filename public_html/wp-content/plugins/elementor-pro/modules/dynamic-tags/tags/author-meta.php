@@ -22,9 +22,6 @@ class Author_Meta extends Author_Tag {
 			'key',
 			[
 				'label' => esc_html__( 'Meta Key', 'elementor-pro' ),
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 	}

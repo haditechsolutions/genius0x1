@@ -73,9 +73,6 @@ class Request_Parameter extends Tag {
 			[
 				'label'   => esc_html__( 'Parameter Name', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 	}

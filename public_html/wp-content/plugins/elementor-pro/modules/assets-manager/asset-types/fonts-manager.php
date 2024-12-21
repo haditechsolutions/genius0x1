@@ -11,7 +11,6 @@ use ElementorPro\Modules\AssetsManager\AssetTypes\AdminMenuItems\Custom_Fonts_Me
 use ElementorPro\Modules\AssetsManager\AssetTypes\AdminMenuItems\Custom_Fonts_Promotion_Menu_Item;
 use ElementorPro\Modules\AssetsManager\Classes;
 use Elementor\Settings;
-use ElementorPro\Includes\ElementorCustomOptionHelper; // RTL : HELPER USE TO AVOID WRITING WHLE NAMESPACE
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -339,84 +338,6 @@ class Fonts_Manager {
 			$this->generate_fonts_list();
 			$custom_fonts = $this->get_font_types();
 		}
-
-
-
-        /*APPEND AND LOAD CUSTOM FONTS*/
-        if(ElementorCustomOptionHelper::is_feature_enabled('anjoman_font')){
-            $custom_fonts += ['Anjoman'=> 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('byekan_font')){
-            $custom_fonts += ['BYekan' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('estedad_font')){
-            $custom_fonts += [
-                'Estedad'=> 'custom',
-                'EstedadFN' => 'custom'
-            ];
-
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('iransans_font')){
-            $custom_fonts += ['IRANSans' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('iransansx_font')){
-            $custom_fonts += ['IRANSansX' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('iranyekan_font')){
-            $custom_fonts += [
-                'IRANYekan' => 'custom',
-                'IRANYekanFN' => 'custom'
-            ];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('kara_font')){
-            $custom_fonts += ['Kara'=> 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('mikhak_font')){
-            $custom_fonts += ['Mikhak' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('nahid_font')){
-            $custom_fonts += ['NahidFN' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('parastoo_font')){
-            $custom_fonts += ['Parastoo'=> 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('pelak_font')){
-            $custom_fonts += ['Pelak' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('pinar_font')){
-            $custom_fonts += [
-                'Pinar' => 'custom',
-                'PinarFN'=> 'custom'
-            ];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('sahel_font')){
-            $custom_fonts += ['SahelFN' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('samim_font')){
-            $custom_fonts += ['SamimFN' => 'custom'];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('shabnam_font')){
-            $custom_fonts += [
-                'Shabnam' => 'custom',
-                'ShabnamFN'=> 'custom'
-            ];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('tanha_font')){
-            $custom_fonts += [
-                'Tanha'=> 'custom',
-                'TanhaFN' => 'custom'
-            ];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('vazir_font')){
-            $custom_fonts += [
-                'VazirFN' => 'custom',
-                'Vazirmatn' => 'custom'
-            ];
-        }
-        if(ElementorCustomOptionHelper::is_feature_enabled('yekan_font')){
-            $custom_fonts += ['Yekan' => 'custom'];
-        }
-
 
 		return array_replace( $custom_fonts, $fonts );
 	}

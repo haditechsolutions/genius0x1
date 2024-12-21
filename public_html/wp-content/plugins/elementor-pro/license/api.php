@@ -129,7 +129,7 @@ class API {
 
 	public static function deactivate_license() {
 		$body_args = [
-			'license' => '',
+			'license' => Admin::get_license_key(),
 		];
 
 		$license_data = self::remote_post( 'license/deactivate', $body_args );
@@ -164,12 +164,11 @@ class API {
 	}
 
 	public static function set_license_data( $license_data, $expiration = null ) {
-        $expiration = null;
 		if ( null === $expiration ) {
-            $expiration = '+5000 hours';
+			$expiration = '+12 hours';
 
-            self::set_transient(Admin::LICENSE_DATA_FALLBACK_OPTION_NAME, $license_data, '+5000 hours');
-        }
+			self::set_transient( Admin::LICENSE_DATA_FALLBACK_OPTION_NAME, $license_data, '+24 hours' );
+		}
 
 		self::set_transient( Admin::LICENSE_DATA_OPTION_NAME, $license_data, $expiration );
 	}
@@ -196,15 +195,6 @@ class API {
 	}
 
 	public static function get_license_data( $force_request = false ) {
-        return [
-            'license' => 'ThisIsMyPowerOfCracking',
-            'payment_id' => 'ThisIsMyPaynmentID',
-            'license_limit' => '1000000000000000000000',
-            'site_count' => '1000000000000000000000',
-            'activations_left' => '1000000000000000000000',
-            'expires' => '10 September 2100',
-            'success' => true,
-        ];
 		$license_data_error = [
 			'success' => false,
 			'error' => static::STATUS_HTTP_ERROR,
@@ -257,7 +247,6 @@ class API {
 	}
 
 	public static function get_version( $force_update = true ) {
-        return ELEMENTOR_PRO_VERSION;
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_PRO_VERSION;
 
 		$info_data = self::get_transient( $cache_key );
@@ -421,23 +410,21 @@ class API {
 
 	public static function is_license_active() {
 		$license_data = self::get_license_data();
-        return true;
+
 		return (bool) $license_data['success'];
 	}
 
 	public static function is_license_expired() {
 		$license_data = self::get_license_data();
-        return false;
+
 		return ! empty( $license_data['error'] ) && self::STATUS_EXPIRED === $license_data['error'];
 	}
 
 	public static function is_licence_pro_trial() {
-        return false;
 		return self::is_licence_has_feature( self::FEATURE_PRO_TRIAL );
 	}
 
 	public static function is_licence_has_feature( $feature_name, $license_check_validator = null ) {
-        return true;
 		$license_data = self::get_license_data();
 
 		if ( self::custom_licence_validator_passed( $license_check_validator ) ) {
@@ -449,7 +436,6 @@ class API {
 	}
 
 	private static function custom_licence_validator_passed( $license_check_validator ) {
-        return true;
 		return null !== $license_check_validator &&
 			is_callable( [ __CLASS__, $license_check_validator ] ) &&
 			self::$license_check_validator();
@@ -469,14 +455,12 @@ class API {
 	 * and should definitely contain a tier and generation.
 	 */
 	private static function licence_supports_tiers() {
-        return false;
 		$license_data = self::get_license_data();
 
 		return ! empty( $license_data[ static::LICENCE_TIER_KEY ] ) && ! empty( $license_data[ static::LICENCE_GENERATION_KEY ] );
 	}
 
 	public static function is_need_to_show_upgrade_promotion() {
-        return false;
 		if ( ! self::licence_supports_tiers() ) {
 			return false;
 		}
@@ -485,7 +469,6 @@ class API {
 	}
 
 	private static function is_licence_tier( $tier ) {
-        return false;
 		if ( ! self::licence_supports_tiers() ) {
 			return false;
 		}
@@ -525,7 +508,6 @@ class API {
 	}
 
 	public static function get_promotion_widgets() {
-        return [];
 		$promotions = Core_API::get_promotion_widgets();
 		$license_data = self::get_license_data();
 
@@ -577,7 +559,7 @@ class API {
 	 */
 	public static function get_library_access_level( $library_type = 'template' ) {
 		$license_data = static::get_license_data();
-        return ConnectModule::ACCESS_LEVEL_EXPERT;
+
 		$access_level = ConnectModule::ACCESS_LEVEL_CORE;
 
 		if ( static::is_license_active() ) {
@@ -616,7 +598,6 @@ class API {
 	 * @return string
 	 */
 	public static function get_access_tier() {
-        return 'expert';
 		if ( ! static::is_license_active() ) {
 			return 'free';
 		}
